@@ -1,16 +1,47 @@
-# movie_mania
+# 🎬 movie_mania
 
-A new Flutter project.
+A powerful Flutter app to explore the latest and trending movies, built using the [TMDB API](https://www.themoviedb.org/documentation/api).
+
+## Features
+
+**Trending & Now Playing**: Discover trending and currently playing movies.
+-  **Detailed Movie Pages**:
+    - Auto-playing YouTube trailer
+    - Casts, genres, and movie overview
+    - "More like this" section for recommendations
+-  **Search**: Instantly search for any movie using debounce for optimized performance.
+-  **Bookmark**: Save your favorite movies to a local list for offline access.
+-  **Share**: Share movie details with friends via deep links or app share.
+-  **Offline Support**: Bookmarked content and previously visited details available offline.
+-  **Clean MVVM Architecture**: Maintains separation of concerns with proper state management.
+
+## ️ Tech Stack
+
+- **Flutter** & **Dart**
+- **TMDB API**
+- **YouTube Player** (`youtube_player_flutter`)
+- **Local Database**: `sqflite`
+- **State Management**: `Provider`
+- **Networking**: `Retrofit` + `Dio`
+- **Routing**: `go_router`
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK (>= 3.10.0)
+- A TMDB API key
+- YouTube API key (optional if using YouTube links directly)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Setup Instructions
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. **Clone the repo**
+
+```bash
+git clone https://github.com/sharmark9931/movie_mania.git
+cd movie_mania
+
+```
+##### Note: Apk, (app-release.apk) is located in apk folder. Use app-release.apk directly for testing on android phone.
+
+

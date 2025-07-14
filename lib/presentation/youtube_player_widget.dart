@@ -10,7 +10,10 @@ class YouTubePlayerWidget extends StatelessWidget {
     return YoutubePlayer(
       controller: YoutubePlayerController(
         initialVideoId: videoKey,
-        flags: const YoutubePlayerFlags(autoPlay: true),
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          loop: true,
+        ),
       ),
       showVideoProgressIndicator: true,
     );

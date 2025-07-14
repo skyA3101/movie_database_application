@@ -3,6 +3,12 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MovieLocalDb {
+  static final MovieLocalDb _instance = MovieLocalDb._internal();
+
+  factory MovieLocalDb() => _instance;
+
+  MovieLocalDb._internal();
+
   static Database? _db;
 
   static Future<Database> get database async {
@@ -90,8 +96,7 @@ class MovieLocalDb {
     }
   }
 
-  static Future<List<Movie>> fetchMovies(
-      {bool trending = false, bool nowPlaying = false}) async {
+  static Future<List<Movie>> fetchMovies({bool trending = false, bool nowPlaying = false}) async {
     final db = await database;
     final results = await db.query(
       'movies',

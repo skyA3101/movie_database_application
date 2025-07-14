@@ -14,7 +14,7 @@ class CastMember {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'character': role, // using 'character' key to match TMDB API format
+      'character': role,
     };
   }
 }

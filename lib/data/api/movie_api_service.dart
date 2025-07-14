@@ -8,11 +8,10 @@ class MovieApiService {
 
   Future<List<Movie>> fetchTrendingMovies() async {
     try {
-      final response = await _dio.get('$_baseUrl/trending/movie/day',
-          queryParameters: {'api_key': _apiKey});
-      final movies = List<Map<String, dynamic>>.from(response.data['results'])
-          .map(Movie.fromJson)
-          .toList();
+      final response =
+          await _dio.get('$_baseUrl/trending/movie/day', queryParameters: {'api_key': _apiKey});
+      final movies =
+          List<Map<String, dynamic>>.from(response.data['results']).map(Movie.fromJson).toList();
       await MovieLocalDb.insertMovies(movies, isTrending: true);
       return movies;
     } catch (_) {
@@ -23,11 +22,10 @@ class MovieApiService {
 
   Future<List<Movie>> fetchNowPlayingMovies() async {
     try {
-      final response = await _dio.get('$_baseUrl/movie/now_playing',
-          queryParameters: {'api_key': _apiKey});
-      final movies = List<Map<String, dynamic>>.from(response.data['results'])
-          .map(Movie.fromJson)
-          .toList();
+      final response =
+          await _dio.get('$_baseUrl/movie/now_playing', queryParameters: {'api_key': _apiKey});
+      final movies =
+          List<Map<String, dynamic>>.from(response.data['results']).map(Movie.fromJson).toList();
       await MovieLocalDb.insertMovies(movies, isNowPlaying: true);
       return movies;
     } catch (_) {
@@ -39,8 +37,7 @@ class MovieApiService {
   Future<MovieDetail> fetchDetail(int id) async {
     // final path = isSeries ? '/tv/$id' : '/movie/$id';
     final path = '/movie/$id';
-    final response =
-        await _dio.get('https://api.themoviedb.org/3$path', queryParameters: {
+    final response = await _dio.get('https://api.themoviedb.org/3$path', queryParameters: {
       'api_key': _apiKey,
     });
     return MovieDetail.fromJson(response.data);
@@ -72,8 +69,7 @@ class MovieApiService {
   Future<List<Video>> fetchVideos(int id) async {
     // final path = isSeries ? '/tv/$id/videos' : '/movie/$id/videos';
     final path = '/movie/$id/videos';
-    final response =
-        await _dio.get('https://api.themoviedb.org/3$path', queryParameters: {
+    final response = await _dio.get('https://api.themoviedb.org/3$path', queryParameters: {
       'api_key': _apiKey,
     });
 
@@ -85,8 +81,7 @@ class MovieApiService {
   Future<List<CastMember>> fetchCast(int id) async {
     // final path = isSeries ? '/tv/$id/credits' : '/movie/$id/credits';
     final path = '/movie/$id/credits';
-    final response =
-        await _dio.get('https://api.themoviedb.org/3$path', queryParameters: {
+    final response = await _dio.get('https://api.themoviedb.org/3$path', queryParameters: {
       'api_key': _apiKey,
     });
 
@@ -107,6 +102,21 @@ class MovieApiService {
     );
 
     final results = List<Map<String, dynamic>>.from(response.data['results']);
+    return results.map((json) => Movie.fromJson(json)).toList();
+  }
+
+  Future<List<Movie>> searchMovies(String query) async {
+    final response = await _dio.get(
+      'https://api.themoviedb.org/3/search/movie',
+      queryParameters: {
+        'query': query,
+        'api_key': _apiKey,
+        'language': 'en-US',
+        'include_adult': false,
+      },
+    );
+
+    final List results = response.data['results'];
     return results.map((json) => Movie.fromJson(json)).toList();
   }
 }

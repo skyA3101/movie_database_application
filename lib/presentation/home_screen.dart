@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:movie_mania/core/utilities/imports.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,6 +11,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Movie>> _trendingMovies;
   late Future<List<Movie>> _nowPlayingMovies;
   late PageController _carouselController;
+
+  final _pages = <Widget>[];
 
   @override
   void initState() {
@@ -35,103 +36,39 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _buildHorizontalSection(String title, List<Movie> movies) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            title,
-            style: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
-        SizedBox(
-          height: 200,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            itemCount: movies.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              final movie = movies[index];
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MovieDetailsPage(movie: movie),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        'https://image.tmdb.org/t/p/w500${movie.posterPath}',
-                    width: 120,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.broken_image, color: Colors.white),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCarousel(List<Movie> movies) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text(
-            'Top 10 in India Today',
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
-        SizedBox(
-          height: 220,
-          child: PageView.builder(
-            controller: _carouselController,
-            itemCount: movies.take(5).length,
-            itemBuilder: (context, index) {
-              final movie = movies[index];
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => MovieDetailsPage(movie: movie)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
-                      width: 120,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    _pages.clear();
+    _pages.addAll([
+      _buildMovieHome(),
+      const SearchScreen(),
+      const BookmarksPage(),
+      const ProfileScreen(),
+    ]);
+
+    return Consumer<HomeScreenProvider>(
+      builder: (context, homeScreenProvider, child) => Scaffold(
+        body: _pages[homeScreenProvider.currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.redAccent,
+          unselectedItemColor: Colors.white60,
+          currentIndex: homeScreenProvider.currentIndex,
+          onTap: (index) {
+            homeScreenProvider.incrementIndex(index);
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+            BottomNavigationBarItem(icon: Icon(Icons.bookmarks_outlined), label: 'Bookmark'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMovieHome() {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -161,22 +98,103 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildCarousel(trending),
                 _buildHorizontalSection('Trending Now', trending),
                 _buildHorizontalSection('Now Playing', nowPlaying),
-                // _buildHorizontalSection('Crowd Pleasers', trending),
-                // _buildHorizontalSection('Emotional Movies', trending),
-                // _buildHorizontalSection('Comedy Movies', trending),
-                // _buildHorizontalSection('Top Searches', trending),
-                // _buildHorizontalSection('Period Pieces', trending),
-                // _buildHorizontalSection('Action & Adventure', trending),
-                // _buildHorizontalSection('Anime', trending),
-                // _buildHorizontalSection('Violent Movies', trending),
-                // _buildHorizontalSection('Police Detective', trending),
-                // _buildHorizontalSection('Hollywood', trending),
-                // _buildHorizontalSection('Bollywood', trending),
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildCarousel(List<Movie> movies) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8),
+          child: Text(
+            'Top 10 in India Today',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          height: 220,
+          child: PageView.builder(
+            controller: _carouselController,
+            itemCount: movies.take(5).length,
+            itemBuilder: (context, index) {
+              final movie = movies[index];
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MovieDetailsPage(movie: movie)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                      width: 120,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.broken_image, color: Colors.white),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHorizontalSection(String title, List<Movie> movies) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+        SizedBox(
+          height: 200,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            itemCount: movies.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final movie = movies[index];
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MovieDetailsPage(movie: movie),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                    width: 120,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.broken_image, color: Colors.white),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

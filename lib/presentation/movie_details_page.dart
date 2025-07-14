@@ -1,6 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:share_plus/share_plus.dart';
-
 import 'package:movie_mania/core/utilities/imports.dart';
 
 class MovieDetailsPage extends StatefulWidget {
@@ -81,8 +78,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   builder: (c2, vs) {
                     if (vs.connectionState != ConnectionState.done) {
                       return CachedNetworkImage(
-                        imageUrl:
-                            'https://image.tmdb.org/t/p/w500${detail.posterPath}',
+                        imageUrl: 'https://image.tmdb.org/t/p/w500${detail.posterPath}',
                         placeholder: (context, url) =>
                             const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) =>
@@ -101,63 +97,68 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 const SizedBox(height: 12),
                 Text(detail.title,
                     style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                        fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                     textAlign: TextAlign.center),
                 const SizedBox(height: 8),
                 Text(
                     '${detail.year} • ${widget.isSeries ? "${detail.seasons} seasons" : detail.runtimeText}',
                     style: const TextStyle(color: Colors.white70)),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                        icon: const Icon(Icons.people),
-                        color: Colors.white,
-                        onPressed: () {
-                          _castFuture.then((cast) => _showCastSheet(cast));
-                        }),
-                    IconButton(
-                        icon: const Icon(Icons.star),
-                        color: Colors.amber,
-                        onPressed: () {
-                          // Bookmark or rating action
-                        }),
-                    IconButton(
-                        icon: const Icon(Icons.share),
-                        color: Colors.white,
-                        onPressed: () {
-                          Share.share('Check out ${detail.title}!');
-                        }),
-                    IconButton(
-                        icon: const Icon(Icons.download),
-                        color: Colors.white,
-                        onPressed: () {
-                          // Download logic
-                        }),
-                    IconButton(
-                        icon: const Icon(Icons.info_outline),
-                        color: Colors.white,
-                        onPressed: () {
-                          final genresText = detail.genres.join(', ');
-                          showDialog(
-                              context: context,
-                              builder: (_) {
-                                return AlertDialog(
-                                  title: const Text('Genres'),
-                                  content: Text(genresText),
-                                );
-                              });
-                        }),
-                  ],
+                Consumer2<MovieDetailsPageProvider, BookmarksProvider>(
+                  builder: (context, provider, bookmarksProvider, child) {
+                    final isMovieBookmarked = bookmarksProvider.isBookmarked(detail.id);
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                            icon: const Icon(Icons.people),
+                            color: Colors.white,
+                            onPressed: () {
+                              _castFuture.then((cast) => _showCastSheet(cast));
+                            }),
+                        IconButton(
+                            icon: Icon(
+                              isMovieBookmarked ? Icons.bookmark : Icons.bookmark_outline,
+                            ),
+                            color: isMovieBookmarked ? Colors.amber : Colors.white,
+                            onPressed: () {
+                              // Bookmark or rating action
+                              bookmarksProvider.toggleBookmark(detail);
+                            }),
+                        IconButton(
+                            icon: const Icon(Icons.share),
+                            color: Colors.white,
+                            onPressed: () {
+                              Share.share('Check out ${detail.title}!');
+                            }),
+                        IconButton(
+                            icon: const Icon(Icons.download),
+                            color: Colors.white,
+                            onPressed: () {
+                              // Download logic
+                            }),
+                        IconButton(
+                            icon: const Icon(Icons.info_outline),
+                            color: Colors.white,
+                            onPressed: () {
+                              final genresText = detail.genres.join(', ');
+                              showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return AlertDialog(
+                                      title: const Text('Genres'),
+                                      content: Text(genresText),
+                                    );
+                                  });
+                            }),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(detail.overview,
-                      style: const TextStyle(color: Colors.white70)),
+                  child: Text(detail.overview, style: const TextStyle(color: Colors.white70)),
                 ),
                 const SizedBox(height: 24),
 
@@ -166,10 +167,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     'More Like This',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
                 FutureBuilder<List<Movie>>(
@@ -188,8 +187,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: similarMovies.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 8,
                           crossAxisSpacing: 8,
@@ -207,14 +205,12 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl:
-                                    'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                                imageUrl: 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator()),
+                                placeholder: (context, url) =>
+                                    const Center(child: CircularProgressIndicator()),
                                 errorWidget: (context, url, error) =>
-                                    const Icon(Icons.broken_image,
-                                        color: Colors.white),
+                                    const Icon(Icons.broken_image, color: Colors.white),
                               ),
                             ),
                           );
@@ -227,6 +223,46 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             ),
           );
         },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey,
+        currentIndex: 0,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/bookmarks');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/profile');
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmarks_outlined),
+            label: 'Bookmarks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }
