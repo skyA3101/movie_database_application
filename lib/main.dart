@@ -13,13 +13,13 @@ void main() {
         ChangeNotifierProvider(create: (context) => SearchScreenProvider.instance()),
         ChangeNotifierProvider(create: (context) => BookmarksProvider.instance()),
       ],
-      child: const MovieManiaApp(),
+      child: const MovieDatabaseApplication(),
     ),
   );
 }
 
-class MovieManiaApp extends StatelessWidget {
-  const MovieManiaApp({super.key});
+class MovieDatabaseApplication extends StatelessWidget {
+  const MovieDatabaseApplication({super.key});
 
   @override
   Widget build(BuildContext context) {

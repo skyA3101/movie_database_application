@@ -1,4 +1,4 @@
 class AppStrings {
-  static String appName = 'MovieMania';
-  static String userName = 'Ravi Sharma';
+  static String appName = 'Movie Database Application';
+  static String userName = 'Akash Chaurasia';
 }

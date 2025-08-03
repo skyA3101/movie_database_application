@@ -42,12 +42,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       body: Center(
         child: FadeTransition(
           opacity: _animation,
-          child: Text(
-            AppStrings.appName,
-            style: const TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: Colors.redAccent,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width / 2,
+            child: Text(
+              AppStrings.appName,
+              style: const TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
