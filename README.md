@@ -1,4 +1,4 @@
-# 🎬 movie_mania
+# 🎬 movie_database_application_
 
 A powerful Flutter app to explore the latest and trending movies, built using the [TMDB API](https://www.themoviedb.org/documentation/api).
 
@@ -38,8 +38,8 @@ A powerful Flutter app to explore the latest and trending movies, built using th
 1. **Clone the repo**
 
 ```bash
-git clone https://github.com/sharmark9931/movie_mania.git
-cd movie_mania
+git clone https://github.com/skyA3101/movie_database_application.git
+cd movie_database_application
 
 ```
 ##### Note: Apk, (app-release.apk) is located in apk folder. Use app-release.apk directly for testing on android phone.
